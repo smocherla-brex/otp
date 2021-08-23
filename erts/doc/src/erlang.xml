@@ -9651,8 +9651,66 @@ hello
 	      systems as of R16B can decode this representation.</p>
 	    </item>
 	  </taglist>
-        <p>See also <seealso marker="#binary_to_term/1">
-          <c>binary_to_term/1</c></seealso>.</p>
+          <p>Option <c>deterministic</c> (introduced in OTP 24.1) can
+          be used to ensure that within the same major release of Erlang/OTP,
+          the same encoded representation is returned for the same
+          term. There is still no guarantee that the encoded representation
+          remains the same between major releases of Erlang/OTP.</p>
+        <p>See also <seemfa marker="#binary_to_term/1">
+          <c>binary_to_term/1</c></seemfa>.</p>
+      </desc>
+    </func>
+
+    <func>
+      <name name="term_to_iovec" arity="1" since="OTP 23.0"/>
+      <fsummary>Encode a term to an Erlang external term format as iovec().
+      </fsummary>
+      <desc>
+        <p>Returns the encoding of <c><anno>Term</anno></c> according to
+	the Erlang external term format as
+	<seetype marker="#ext_iovec"><c>ext_iovec()</c></seetype>.</p>
+
+	<p>This function produce the same encoding as
+	<seemfa marker="#term_to_binary/1"><c>term_to_binary/1</c></seemfa>,
+	but with another return type. The call
+	<c>iolist_to_binary(term_to_iovec(Term))</c> will produce
+	exactly the same result as the call <c>term_to_binary(Term)</c>.</p>
+
+	<p><c>term_to_iovec()</c> is a pure optimization of the functionality
+	<c>term_to_binary()</c> provide. <c>term_to_iovec()</c> can for example
+	refer directly to off heap binaries instead of copying the binary
+	data into the result.</p>
+
+	<p>See also
+	<seemfa marker="#term_to_binary/1"><c>term_to_binary/1</c></seemfa>.</p>
+      </desc>
+    </func>
+
+    <func>
+      <name name="term_to_iovec" arity="2" since="OTP 23.0"/>
+      <fsummary>Encode a term to en Erlang external term format as iovec().
+      </fsummary>
+      <desc>
+        <p>Returns the encoding of <c><anno>Term</anno></c> according to
+	the Erlang external term format as
+	<seetype marker="#ext_iovec"><c>ext_iovec()</c></seetype>.</p>
+
+	<p>This function produce the same encoding as
+	<seemfa marker="#term_to_binary/2"><c>term_to_binary/2</c></seemfa>,
+	but with another return type. The call
+	<c>iolist_to_binary(term_to_iovec(Term, Opts))</c> will produce
+	exactly the same result as <c>term_to_binary(Term, Opts)</c>.</p>
+
+	<p>Currently recognised options are all options recognised by
+	<seemfa marker="#term_to_binary/2"><c>term_to_binary/2</c></seemfa>.</p>
+
+	<p><c>term_to_iovec()</c> is a pure optimization of the functionality
+	<c>term_to_binary()</c> provide. <c>term_to_iovec()</c> can for example
+	refer directly to off heap binaries instead of copying the binary
+	data into the result.</p>
+
+	<p>See also
+	<seemfa marker="#term_to_binary/2"><c>term_to_binary/2</c></seemfa>.</p>
       </desc>
     </func>
 

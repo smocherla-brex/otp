@@ -2552,9 +2552,24 @@ term_to_binary(_Term) ->
 -spec term_to_binary(Term, Options) -> ext_binary() when
       Term :: term(),
       Options :: [compressed |
-                  {compressed, Level :: 0..9} |
-                  {minor_version, Version :: 0..2} ].
+         {compressed, Level :: 0..9} |
+         deterministic |
+         {minor_version, Version :: 0..2} ].
 term_to_binary(_Term, _Options) ->
+    erlang:nif_error(undefined).
+
+-spec term_to_iovec(Term) -> ext_iovec() when
+      Term :: term().
+term_to_iovec(_Term) ->
+    erlang:nif_error(undefined).
+
+-spec term_to_iovec(Term, Options) -> ext_iovec() when
+      Term :: term(),
+      Options :: [compressed |
+         {compressed, Level :: 0..9} |
+         deterministic |
+         {minor_version, Version :: 0..2} ].
+term_to_iovec(_Term, _Options) ->
     erlang:nif_error(undefined).
 
 %% Shadowed by erl_bif_types: erlang:tl/1
