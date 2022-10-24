@@ -32,7 +32,7 @@
 # file to build Yielding C Fun (YCF). The file "main_target.mk"
 # contains the necessary rules to build YCF and is included both by
 # this file and the Erlang/OTP file
-# $(ERL_TOP)/erts/emulator/Makefile.in. This file is intended for
+# $(ERL_TOP)/erts/lib_src/Makefile.in. This file is intended for
 # building YCF independently of Erlang/OTP. This file also contains
 # several special make targets (e.g., to invoke tests).
 #
@@ -51,27 +51,31 @@ ifdef USE_GC
 endif
 
 ifdef ADD_SAN
-	CC = clang
+	V_CC = clang
 	EXTRA_C_FLAGS = -std=c99 -Wall -pedantic -g -O00 -fsanitize-blacklist=lib/simple_c_gc/.misc/clang_blacklist.txt -fsanitize=address -fno-omit-frame-pointer
 	USE_GC_STRING = -use_gc
 endif
 
 ifdef MEM_SAN
-	CC = clang
+	V_CC = clang
 	EXTRA_C_FLAGS = -std=c99 -Wall -pedantic -g -O00 -fsanitize-blacklist=lib/simple_c_gc/.misc/clang_blacklist.txt -fsanitize=memory -fno-omit-frame-pointer
 endif
 
 ifdef UB_SAN
-	CC = clang
+	V_CC = clang
 	EXTRA_C_FLAGS = -std=c99 -Wall -pedantic -g -O00 -fsanitize-blacklist=lib/simple_c_gc/.misc/clang_blacklist.txt -fsanitize=undefined -fno-omit-frame-pointer
 endif
 
 
 YCF_SOURCE_DIR = .
 
-CC = cc
+ifndef V_CC
+	V_CC = cc
+endif
 
-LD = $(CC)
+ifndef V_LD
+	V_LD = $(CC)
+endif
 
 CFLAGS = $(EXTRA_C_FLAGS)
 
@@ -99,7 +103,7 @@ Makefile: $(YCF_SOURCES)
 	echo '# file to build Yielding C Fun (YCF). The file "main_target.mk"' >> Makefile
 	echo '# contains the necessary rules to build YCF and is included both by' >> Makefile
 	echo '# this file and the Erlang/OTP file' >> Makefile
-	echo '# $$(ERL_TOP)/erts/emulator/Makefile.in. This file is intended for' >> Makefile
+	echo '# $$(ERL_TOP)/erts/lib_src/Makefile.in. This file is intended for' >> Makefile
 	echo '# building YCF independently of Erlang/OTP.' >> Makefile
 	echo '#' >> Makefile
 	echo  >> Makefile
@@ -138,19 +142,19 @@ test: $(YCF_EXECUTABLE)
 
 test_add_san:
 	make clean && \
-	make CC=clang ADD_SAN=1 test
+	make V_CC=clang V_LD=clang ADD_SAN=1 test
 
 test_mem_san:
 	make clean && \
-	make CC=clang MEM_SAN=1 test
+	make V_CC=clang V_LD=clang MEM_SAN=1 test
 
 test_ub_san:
 	make clean && \
-	make CC=clang UB_SAN=1 test
+	make V_CC=clang V_LD=clang UB_SAN=1 test
 
 test_modern_cc:
 	make clean && \
-	make CC=clang MODERN_CC=1 test
+	make V_CC=clang V_LD=clang MODERN_CC=1 test
 
 test_sanitizers:
 	make test_add_san && \
@@ -158,9 +162,9 @@ test_sanitizers:
 	make test_ub_san
 
 test_gcc_clang_tcc:
-	make CC=gcc EXTRA_C_FLAGS="-g -O01 -std=c99 -pedantic -Wall -Werror" clean $(YCF_EXECUTABLE) && \
-	make CC=clang EXTRA_C_FLAGS="-g -O01 -std=c99 -pedantic -Wall -Werror" clean $(YCF_EXECUTABLE) && \
-	make CC=tcc EXTRA_C_FLAGS="-g -O01 -std=c99 -pedantic -Wall -Werror" clean $(YCF_EXECUTABLE)
+	make V_CC=gcc V_LD=gcc EXTRA_C_FLAGS="-g -O01 -std=c99 -pedantic -Wall -Werror" clean $(YCF_EXECUTABLE) && \
+	make V_CC=clang V_LD=clang EXTRA_C_FLAGS="-g -O01 -std=c99 -pedantic -Wall -Werror" clean $(YCF_EXECUTABLE) && \
+	make V_CC=tcc V_LD=tcc EXTRA_C_FLAGS="-g -O01 -std=c99 -pedantic -Wall -Werror" clean $(YCF_EXECUTABLE)
 
 test_32_bit:
 	make clean && \
