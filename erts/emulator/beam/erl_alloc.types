@@ -301,7 +301,7 @@ type	SL_MPATHS	SHORT_LIVED	SYSTEM		sl_migration_paths
 
 type	T2B_DETERMINISTIC SHORT_LIVED	PROCESSES	term_to_binary_deterministic
 
-+ if hipe
++if hipe
 #
 # Types used for special emulators
 #
