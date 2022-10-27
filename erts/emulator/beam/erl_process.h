@@ -971,7 +971,7 @@ struct process {
     BeamInstr* cp;		/* (untagged) Continuation pointer (for threaded code). */
     BeamInstr* i;		/* Program counter for threaded code. */
     Sint catches;		/* Number of catches on stack */
-    Sint fcalls;		/* 
+    Sint fcalls;		/*
 				 * Number of reductions left to execute.
 				 * Only valid for the current process.
 				 */
@@ -1066,7 +1066,7 @@ struct process {
 #endif
 
 #ifdef FORCE_HEAP_FRAGS
-    Uint space_verified;        /* Avoid HAlloc forcing heap fragments when */ 
+    Uint space_verified;        /* Avoid HAlloc forcing heap fragments when */
     Eterm* space_verified_from; /* we rely on available heap space (TestHeap) */
 #endif
 
@@ -1094,10 +1094,10 @@ void erts_check_for_holes(Process* p);
 #endif
 
 /*
- * The MBUF_GC_FACTOR decides how easily a process is subject to GC 
+ * The MBUF_GC_FACTOR decides how easily a process is subject to GC
  * due to message buffers allocated outside the heap.
  * The larger the factor, the easier the process gets GCed.
- * On a small memory system with lots of processes, this makes a significant 
+ * On a small memory system with lots of processes, this makes a significant
  * difference, especially since the GCs help fragmentation quite a bit too.
  */
 #if defined(SMALL_MEMORY)
@@ -1135,7 +1135,7 @@ void erts_check_for_holes(Process* p);
  *             prio may be higher than user prio.
  * USR_PRIO -> User prio. i.e., prio the user has set.
  * PRQ_PRIO -> Prio queue prio, i.e., prio queue currently
- *             enqueued in. 
+ *             enqueued in.
  *
  * Update etp-proc-state-int in $ERL_TOP/erts/etc/unix/etp-commands.in
  * when changing ERTS_PSFLG_*.
@@ -1319,7 +1319,7 @@ ERTS_GLB_INLINE void erts_heap_frag_shrink(Process* p, Eterm* hp)
     sz = hp - hf->mem;
     p->mbuf_sz -= hf->used_size - sz;
     hf->used_size = sz;
-}	
+}
 #endif /* inline */
 
 Eterm* erts_heap_alloc(Process* p, Uint need, Uint xtra);
@@ -1340,7 +1340,7 @@ struct erts_system_monitor_flags_t {
 extern struct erts_system_monitor_flags_t erts_system_monitor_flags;
 
 /* system_profile, same rules as for system_monitor.
-	erts_profile must be != NIL when 
+	erts_profile must be != NIL when
 	erts_profile_* is set. */
 
 extern Eterm erts_system_profile;
@@ -1495,7 +1495,7 @@ extern int erts_system_profile_ts_type;
 #define DT_UTAG_PERMANENT (1 << 0)
 #define DT_UTAG_SPREADING (1 << 1)
 #define DT_UTAG(P) ((P)->dt_utag)
-#define DT_UTAG_FLAGS(P)  ((P)->dt_utag_flags) 
+#define DT_UTAG_FLAGS(P)  ((P)->dt_utag_flags)
 #endif
 
 #define CANCEL_TIMER(P)					\
@@ -2633,6 +2633,7 @@ void erts_notify_inc_runq(ErtsRunQueue *runq);
 void erts_sched_finish_poke(ErtsSchedulerSleepInfo *, erts_aint32_t);
 ERTS_GLB_INLINE void erts_sched_poke(ErtsSchedulerSleepInfo *ssi);
 void erts_aux_thread_poke(void);
+ERTS_GLB_INLINE Uint32 erts_sched_local_random_hash_64_to_32_shift(Uint64 key);
 
 #if ERTS_GLB_INLINE_INCL_FUNC_DEF
 
@@ -2646,6 +2647,22 @@ erts_sched_poke(ErtsSchedulerSleepInfo *ssi)
 	flags = erts_atomic32_read_band_nob(&ssi->flags, ~ERTS_SSI_FLGS_SLEEP);
 	erts_sched_finish_poke(ssi, flags);
     }
+}
+
+/*
+ * Source: https://gist.github.com/badboy/6267743
+ *         http://web.archive.org/web/20071223173210/http://www.concentric.net/~Ttwang/tech/inthash.htm
+ */
+ERTS_GLB_INLINE
+Uint32 erts_sched_local_random_hash_64_to_32_shift(Uint64 key)
+{
+    key = (~key) + (key << 18); /* key = (key << 18) - key - 1; */
+    key = key ^ (key >> 31);
+    key = (key + (key << 2)) + (key << 4);
+    key = key ^ (key >> 11);
+    key = key + (key << 6);
+    key = key ^ (key >> 22);
+    return (Uint32) key;
 }
 
 
