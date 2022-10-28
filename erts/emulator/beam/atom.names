@@ -196,6 +196,7 @@ atom debug_flags
 atom decimals
 atom default
 atom delay_trap
+atom deterministic
 atom dictionary
 atom dirty_bif_exception
 atom dirty_bif_result

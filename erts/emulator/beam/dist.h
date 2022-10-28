@@ -49,6 +49,15 @@
 #define DFLAG_NO_MAGIC            0x200000 /* internal for pending connection */
 #define DFLAG_EXIT_PAYLOAD        0x400000
 #define DFLAG_FRAGMENTS           0x800000
+#define DFLAG_PENDING_CONNECT     ((Uint64)0x200000) /* internal */
+
+/*
+ * In term_to_binary/2, we will use DFLAG_ATOM_CACHE to mean
+ * DFLAG_DETERMINISTIC.
+ */
+
+#define DFLAG_DETERMINISTIC            DFLAG_ATOM_CACHE
+
 
 /* Mandatory flags for distribution */
 #define DFLAG_DIST_MANDATORY (DFLAG_EXTENDED_REFERENCES         \
@@ -207,8 +216,24 @@ typedef struct TTBEncodeContext_ {
     byte* ep;
     Eterm obj;
     ErtsWStack wstack;
+    Eterm* map_array;
+    Eterm* next_map_element;
+    void* ycf_yield_state;
     Binary *result_bin;
 } TTBEncodeContext;
+
+#define ERTS_INIT_TTBEncodeContext(Ctx, Flags)                  \
+    do {                                                        \
+        (Ctx)->wstack.wstart = NULL;                            \
+        (Ctx)->flags = (Flags);                                \
+        (Ctx)->level = 0;                                       \
+        (Ctx)->map_array = 0;                                   \
+        (Ctx)->ycf_yield_state = 0;                             \
+        if ((Flags) & DFLAG_PENDING_CONNECT) {                  \
+            (Ctx)->hopefull_flags = 0;                          \
+        }                                                       \
+    } while (0)
+
 
 typedef struct {
     Uint real_size;

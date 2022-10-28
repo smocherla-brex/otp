@@ -261,7 +261,7 @@ literal_table(#asm{literals=Tab,next_literal=NumLiterals}) ->
     {NumLiterals,L}.
 
 my_term_to_binary(Term) ->
-    term_to_binary(Term, [{minor_version,1}]).
+    term_to_binary(Term, [{minor_version,1},deterministic]).
 
 %% Return the line table.
 -spec line_table(bdict()) ->

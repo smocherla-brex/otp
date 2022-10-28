@@ -2552,6 +2552,7 @@ term_to_binary(_Term) ->
 -spec term_to_binary(Term, Options) -> ext_binary() when
       Term :: term(),
       Options :: [compressed |
+                  deterministic |
                   {compressed, Level :: 0..9} |
                   {minor_version, Version :: 0..2} ].
 term_to_binary(_Term, _Options) ->
