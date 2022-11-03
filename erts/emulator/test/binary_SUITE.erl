@@ -570,7 +570,7 @@ terms(Config) when is_list(Config) ->
                                                      DetSz when is_integer(DetSz), byte_size(Bin) =< DetSz ->
                                                          ok
                                                  end,
-              Term = binary_to_term_stress(BinDet),
+              Term = binary_to_term_stress(BinDet)
 	      end,
     test_terms(TestFun),
     ok.
@@ -583,16 +583,15 @@ t2b_deterministic(_Config) ->
 
     Map1 = maps:merge(make_map(10000), Map0),
     test_deterministic(Map1),
-
     case total_memory() of
-        Amount when Amount > 15 ->
+        Amount when Amount > 0 ->
             t2b_deterministic_heavy(Map0);
         _ ->
             {comment,"heavy tests skipped"}
     end.
 
 t2b_deterministic_heavy(Map0) ->
-    Map1 = maps:merge(make_map(1_000_000), Map0),
+    Map1 = maps:merge(make_map(1000000), Map0),
     test_deterministic(Map1),
 
     %% If the external representation of the term to be encoded is
@@ -615,7 +614,7 @@ t2b_deterministic_heavy(Map0) ->
     %% test with memory sanitizer or valgrind to catch potential memory
     %% leaks.)
     erlang:trace_pattern({erlang, term_to_binary, 2}, true, []),
-    Map = huge_map(1_000_000, []),
+    Map = huge_map(1000000, []),
     rinse_and_repeat(2, Map).
 
 rinse_and_repeat(Wait, Map) ->
